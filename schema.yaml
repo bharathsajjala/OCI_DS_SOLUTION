@@ -1,0 +1,566 @@
+# reference for schema.yaml:
+# https://docs.oracle.com/en-us/iaas/Content/ResourceManager/Concepts/terraformconfigresourcemanager_topic-schema.htm#exampleschema
+title: "OCI DataScience Pipeline"
+description: "Deploy the building blocks that are necessary for your data science solution architecture."
+schemaVersion: 1.1.0
+version: 20190404
+locale: "en"
+
+variableGroups:
+- title: "Authentication"
+  visible: false
+  variables:
+    - tenancy_ocid
+    - user_ocid
+    - fingerprint
+    - private_key_path
+    - region
+    - current_user_ocid
+- title: "Select Resources"
+  variables:
+    - compartment_is_deployed
+    - vcn_is_deployed
+    - ods_is_deployed
+    - odi_is_deployed
+    - adw_is_deployed
+    - oac_is_deployed
+    - bucket_is_deployed
+    - datacatalog_is_deployed
+    - streaming_is_deployed
+- title: "Naming"
+  variables:
+    - suffix
+- title: "Compartment"
+  variables:
+    - compartment_name
+    - compartment_description
+    - compartment_id
+    - parent_compartment_id
+    - enable_delete
+    - compartment_group_is_deployed
+    - compartment_group_name
+    - compartment_group_description
+    - compartment_policy_is_deployed
+    - compartment_policy_name
+    - compartment_policy_description
+- title: "Virtual Cloud Network"
+  variables:
+    - vcn_display_name
+    - vcn_dns_label
+    - vcn_cidrs
+    - ng_display_name
+    - sg_display_name
+    - vcn_group_is_deployed
+    - vcn_group_name
+    - vcn_group_description
+    - vcn_policy_is_deployed
+    - vcn_policy_name
+    - vcn_policy_description
+- title: "Data Science"
+  variables:
+    - notebook_session_display_name
+    - notebook_session_notebook_session_configuration_details_shape
+    - notebook_session_notebook_session_configuration_details_block_storage_size_in_gbs
+    - project_display_name
+    - ods_subnet_display_name
+    - ods_subnet_dns_label
+    - ods_subnet_cidr
+    - ods_rt_display_name
+    - ods_sl_display_name
+    - ods_group_is_deployed
+    - ods_group_name
+    - ods_group_description
+    - ods_dynamic_group_is_deployed
+    - ods_dynamic_group_name
+    - ods_dynamic_group_description
+    - ods_policy_is_deployed
+    - ods_policy_name
+    - ods_policy_description
+- title: "Object Storage Bucket"
+  variables:
+    - bucket_name
+    - bucket_access_type
+    - bucket_storage_tier
+    - bucket_versioning
+    - bucket_group_is_deployed
+    - bucket_group_name
+    - bucket_group_description
+    - bucket_policy_is_deployed
+    - bucket_policy_name
+    - bucket_policy_description
+
+variables:
+  suffix:
+    type: string
+    required: true
+    description: "Enter a string to use as a suffix that will be appended to your resource names. If this value contains DEFAULT_REGION_KEY, then the region key will be extracted from your cloud configuration and used to replace that part of the suffix value. If the value is set to NONE, then no suffix will be used."
+    title: "Suffix"
+    default: "NONE"
+  compartment_is_deployed:
+    type: boolean
+    required: true
+    description: "New Compartment (logical IAM container), which will be deployed within an existing Compartment. If unchecked, the stack will be deployed within an existing Compartment."
+    title: "Deploy New Compartment?"
+    default: true
+    visible: compartment_is_visible
+  vcn_is_deployed:
+    type: boolean
+    required: true
+    description: "Customizable and private cloud network."
+    title: "Deploy Virtual Cloud Network?"
+    default: true
+  ods_is_deployed:
+    type: boolean
+    required: true
+    description: "Build, train, deploy, and manage machine learning models with a data science cloud platform built for teams."
+    title: "Deploy ODS?"
+    default: true
+  bucket_is_deployed:
+    type: boolean
+    required: true
+    description: "Securely store any type of data in its native format, with built-in redundancy."
+    title: "Deploy Bucket?"
+    default: false
+
+  # "detail" tiles
+  compartment_name:
+    type: string
+    required: true
+    description: "(Updatable) The name of the Compartment. Valid characters are uppercase or lowercase letters, numbers, hyphens, underscores, and periods. The name must be unique across all Compartments in the parent Compartment."
+    title: "Compartment Name"
+    default: "Lakehouse"
+    visible: compartment_is_deployed
+    pattern: "^[_\\-a-zA-Z0-9\\.]*$"
+  compartment_description:
+    type: string
+    required: true
+    description: "Provide a description for the new Compartment."
+    title: "Compartment Description"
+    default: "Compartment for Lakehouse Pipeline"
+    visible: compartment_is_deployed
+  compartment_id:
+    type: oci:identity:compartment:id
+    required: true
+    description: "Compartment where all resources in the stack will be deployed."
+    title: "Compartment"
+    default: compartment_ocid
+    visible:
+      not: compartment_is_deployed
+  parent_compartment_id:
+    type: oci:identity:compartment:id
+    required: true
+    description: "Compartment where all resources in the stack will be deployed."
+    title: "Parent Compartment"
+    default: compartment_ocid
+    visible: compartment_is_deployed
+  enable_delete:
+    type: boolean
+    required: true
+    description: "If set to false, the provider will implicitly import the compartment if there is a name collision, and will not actually delete the compartment on destroy or removal of the resource declaration. If set to true, the provider will throw an error on a name collision with another compartment, and will attempt to delete the compartment on destroy or removal of the resource declaration."
+    title: "Enable Delete"
+    default: false
+    visible: compartment_is_deployed
+  compartment_group_is_deployed:
+    type: boolean
+    required: true
+    description: "Group for users who manage Compartment-related operations."
+    title: "Deploy Group for Compartment?"
+    default: false
+    visible: compartment_is_deployed
+  compartment_group_name:
+    type: string
+    required: true
+    description: "(Updatable)"
+    title: "Compartment Group - Name"
+    default: "CompartmentGroup"
+    visible:
+      and:
+        - compartment_is_deployed
+        - compartment_group_is_deployed
+  compartment_group_description:
+    type: string
+    required: true
+    description: "(Updatable)"
+    title: "Compartment Group - Description"
+    default: "Group for users who manage Compartment-related operations."
+    visible:
+      and:
+        - compartment_is_deployed
+        - compartment_group_is_deployed
+  compartment_policy_is_deployed:
+    type: boolean
+    required: true
+    description: "Collection of policy statements that grant permissions for user groups, dynamic groups, and services."
+    title: "Deploy Identity and Access Management (IAM) Policies for Compartment?"
+    default: false
+    visible:
+      and:
+        - compartment_is_deployed
+        - compartment_group_is_deployed
+  compartment_policy_name:
+    type: string
+    required: true
+    description: "(Updatable)"
+    title: "Compartment Policy - Name"
+    default: "CompartmentPolicy"
+    visible:
+      and:
+        - compartment_is_deployed
+        - compartment_policy_is_deployed
+  compartment_policy_description:
+    type: string
+    required: true
+    description: "(Updatable)"
+    title: "Compartment Policy - Description"
+    default: "Collection of policy statements that grant permissions for user groups, dynamic groups, and services."
+    visible:
+      and:
+        - compartment_is_deployed
+        - compartment_policy_is_deployed
+
+  vcn_display_name:
+    type: string
+    required: true
+    description: "(Updatable) User-friendly name for your Virtual Cloud Network (VCN)."
+    title: "VCN Name"
+    default: "VCN"
+    visible: vcn_is_deployed
+  vcn_dns_label:
+    type: string
+    required: true
+    description: "A DNS label for the VCN, used in conjunction with the VNIC's hostname and subnet's DNS label to form a fully qualified domain name (FQDN) for each VNIC within this subnet (for example, bminstance-1.subnet123.vcn1.oraclevcn.com). Must be an alphanumeric string that begins with a letter. The value cannot be changed. The absence of this parameter means the Internet and VCN Resolver will not work for this VCN."
+    title: "VCN DNS Label"
+    default: "vcn"
+    maxLength: 15
+    visible: vcn_is_deployed
+  vcn_cidrs:
+    type: array
+    items:
+      pattern: "^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\/(3[0-2]|[1-2]?[0-9])$"
+      type: string
+    required: true
+    description: "(Updatable) A list of CIDR ranges to use for this VCN"
+    default: ["10.0.0.0/16"]
+    visible: vcn_is_deployed
+  ng_display_name:
+    type: string
+    required: true
+    description: "(Updatable) User-friendly name for your Network Address Translation (NAT) Gateway."
+    title: "NAT Gateway Name"
+    default: "NAT Gateway"
+    visible: vcn_is_deployed
+  sg_display_name:
+    type: string
+    required: true
+    description: "(Updatable) User-friendly name for your Service Gateway."
+    title: "Service Gateway Name"
+    default: "Service Gateway"
+    visible: vcn_is_deployed
+  vcn_group_is_deployed:
+    type: boolean
+    required: true
+    description: "Group for users who manage Virtual-Cloud-Network-related operations."
+    title: "Deploy Group for VCN?"
+    default: false
+    visible: vcn_is_deployed
+  vcn_group_name:
+    type: string
+    required: true
+    description: "(Updatable)"
+    title: "VCN Group - Name"
+    default: "VirtualCloudNetworkGroup"
+    visible:
+      and:
+        - vcn_is_deployed
+        - vcn_group_is_deployed
+  vcn_group_description:
+    type: string
+    required: true
+    description: "(Updatable)"
+    title: "VCN Group - Description"
+    default: "Group for users who manage Virtual-Cloud-Network-related operations."
+    visible:
+      and:
+        - vcn_is_deployed
+        - vcn_group_is_deployed
+  vcn_policy_is_deployed:
+    type: boolean
+    required: true
+    description: "Collection of policy statements that grant permissions for user groups, dynamic groups, and services."
+    title: "Deploy Identity and Access Management (IAM) Policies for VCN?"
+    default: false
+    visible:
+      and:
+        - vcn_is_deployed
+        - vcn_group_is_deployed
+  vcn_policy_name:
+    type: string
+    required: true
+    description: "(Updatable)"
+    title: "VCN Policy - Name"
+    default: "VirtualCloudNetworkPolicy"
+    visible:
+      and:
+        - vcn_is_deployed
+        - vcn_policy_is_deployed
+  vcn_policy_description:
+    type: string
+    required: true
+    description: "(Updatable)"
+    title: "VCN Policy - Description"
+    default: "Collection of policy statements that grant permissions for user groups, dynamic groups, and services."
+    visible:
+      and:
+        - vcn_is_deployed
+        - vcn_policy_is_deployed
+
+  project_display_name:
+    type: string
+    required: true
+    description: "(Updatable) User-friendly name for your ODS Project instance."
+    title: "ODS Project Name"
+    default: "ODS Project"
+    visible: ods_is_deployed
+  notebook_session_display_name:
+    type: string
+    required: true
+    description: "(Updatable) User-friendly name for your ODS Notebook Session instance."
+    title: "ODS Notebook Session Name"
+    default: "ODS Notebook Session"
+    visible: ods_is_deployed
+  notebook_session_notebook_session_configuration_details_shape:
+    type: string
+    required: true
+    description: "(Updatable) The shape used to launch the notebook session compute instance. Review this page for details on allowed shapes: https://docs.oracle.com/en-us/iaas/data-science/using/manage-notebook-sessions.htm"
+    title: "ODS Notebook Session Shape"
+    default: "VM.Standard2.1"
+    visible: ods_is_deployed
+  notebook_session_notebook_session_configuration_details_block_storage_size_in_gbs:
+    type: integer
+    required: true
+    description: "(Updatable) A notebook session instance is provided with a block storage volume. This specifies the size of the volume in GBs."
+    title: "ODS Notebook Session Storage Size (GB)"
+    default: 100
+    minimum: 50
+    maximum: 32000
+    visible: ods_is_deployed
+  ods_subnet_display_name:
+    type: string
+    required: true
+    description: "(Updatable) User-friendly name for your ODS Subnet."
+    title: "ODS Subnet Name"
+    default: "ODS Subnet"
+    visible: ods_is_deployed
+  ods_subnet_dns_label:
+    type: string
+    required: true
+    description: "A DNS label for the ODS Subnet, used in conjunction with the VNIC's hostname and VCN's DNS label to form a fully qualified domain name (FQDN) for each VNIC within this subnet (for example, bminstance-1.subnet123.vcn1.oraclevcn.com). Must be an alphanumeric string that begins with a letter and is unique within the VCN. The value cannot be changed. This value must be set if you want to use the Internet and VCN Resolver to resolve the hostnames of instances in the subnet. It can only be set if the VCN itself was created with a DNS label."
+    title: "ODS Subnet DNS Label"
+    default: "ods-sub"
+    maxLength: 15
+    visible: ods_is_deployed
+  ods_subnet_cidr:
+    type: string
+    required: true
+    description: "(Updatable) A list of CIDR ranges to use for your ODS Subnet."
+    title: "ODS Subnet CIDR"
+    default: "10.0.0.0/24"
+    pattern: "^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\/(3[0-2]|[1-2]?[0-9])$"
+    visible: ods_is_deployed
+  ods_rt_display_name:
+    type: string
+    required: true
+    description: "(Updatable) User-friendly name for the Route Table that will be associated with your ODS Subnet."
+    title: "ODS Route Table Name"
+    default: "ODS Route Table"
+    visible: ods_is_deployed
+  ods_sl_display_name:
+    type: string
+    required: true
+    description: "(Updatable) User-friendly name for the Security List that will be associated with your ODS Subnet."
+    title: " ODS Security List Name"
+    default: "ODS Security List"
+    visible: ods_is_deployed
+  ods_group_is_deployed:
+    type: boolean
+    required: true
+    description: "Group for users who manage Data-Science-related operations."
+    title: "Deploy Group for ODS?"
+    default: false
+    visible: ods_is_deployed
+  ods_group_name:
+    type: string
+    required: true
+    description: "(Updatable)"
+    title: "ODS Group - Name"
+    default: "DataScienceGroup"
+    visible:
+      and:
+        - ods_is_deployed
+        - ods_group_is_deployed
+  ods_group_description:
+    type: string
+    required: true
+    description: "(Updatable)"
+    title: "ODS Group - Description"
+    default: "Group for users who manage Data-Science-related operations."
+    visible:
+      and:
+        - ods_is_deployed
+        - ods_group_is_deployed
+  ods_dynamic_group_is_deployed:
+    type: boolean
+    required: true
+    description: "Group defined by a rule that matches particular resource-types within a given compartment."
+    title: "Deploy Dynamic Group for ODS?"
+    default: true
+    visible: ods_is_deployed
+  ods_dynamic_group_name:
+    type: string
+    required: true
+    description: "(Updatable)"
+    title: "ODS Dynamic Group - Name"
+    default: "DataScienceDynamicGroup"
+    visible:
+      and:
+        - ods_is_deployed
+        - ods_dynamic_group_is_deployed
+  ods_dynamic_group_description:
+    type: string
+    required: true
+    description: "(Updatable)"
+    title: "ODS Dynamic Group - Description"
+    default: "Group defined by a rule that matches particular resource-types within a given compartment."
+    visible:
+      and:
+        - ods_is_deployed
+        - ods_dynamic_group_is_deployed
+  ods_policy_is_deployed:
+    type: boolean
+    required: true
+    description: "Collection of policy statements that grant permissions for user groups, dynamic groups, and services."
+    title: "Deploy Identity and Access Management (IAM) Policies for ODS?"
+    default: true
+    visible:
+      and:
+        - or:
+          - ods_dynamic_group_is_deployed
+          - ods_group_is_deployed
+        - ods_is_deployed
+  ods_policy_name:
+    type: string
+    required: true
+    description: "(Updatable)"
+    title: "ODS Policy - Name"
+    default: "DataSciencePolicy"
+    visible:
+      and:
+        - ods_is_deployed
+        - ods_policy_is_deployed
+  ods_policy_description:
+    type: string
+    required: true
+    description: "(Updatable)"
+    title: "ODS Policy - Description"
+    default: "Collection of policy statements that grant permissions for user groups, dynamic groups, and services."
+    visible:
+      and:
+        - ods_is_deployed
+        - ods_policy_is_deployed
+
+  bucket_name:
+    type: string
+    required: true
+    description: "The name of the Bucket. Valid characters are uppercase or lowercase letters, numbers, hyphens, underscores, and periods. Bucket names must be unique within an Object Storage"
+    title: "Bucket Name"
+    default: "Bucket"
+    visible: bucket_is_deployed
+    pattern: "^[_\\-a-zA-Z0-9\\.]*$"
+  bucket_access_type:
+    type: enum
+    enum:
+      - NoPublicAccess
+      - ObjectRead
+      - ObjectReadWithoutList
+    required: true
+    description: "(Updatable) The type of public access enabled on this bucket. A bucket is set to \"NoPublicAccess\" by default, which only allows an authenticated caller to access the bucket and its contents. When \"ObjectRead\" is enabled on the bucket, public access is allowed for the \"GetObject\", \"HeadObject\", and \"ListObjects\" operations. When \"ObjectReadWithoutList\" is enabled on the bucket, public access is allowed for the \"GetObject\" and \"HeadObject\" operations."
+    title: "Bucket Access Type"
+    default: NoPublicAccess
+    visible: bucket_is_deployed
+  bucket_storage_tier:
+    type: enum
+    enum:
+      - Standard
+      - Archive
+    required: true
+    description: "The storage tier of the bucket. The Standard storage tier is \"hot\" storage used for data that you need to access quickly, immediately, and frequently. The Archive storage tier is \"cold\" storage used for data seldom or rarely access, but that must be retained and preserved for long periods of time."
+    title: "Bucket Access Type"
+    default: Standard
+    visible: bucket_is_deployed
+  bucket_versioning:
+    type: enum
+    enum:
+      - Enabled
+      - Disabled
+    required: true
+    description: "(Updatable) Use this option to enable versioning during bucket creation. Objects in a version enabled bucket are protected from overwrites and deletions. Previous versions of the same object will be available in the bucket."
+    title: "Bucket Versioning"
+    default: Disabled
+    visible: bucket_is_deployed
+  bucket_group_is_deployed:
+    type: boolean
+    required: true
+    description: "Group for users who manage Bucket-related operations."
+    title: "Deploy Group for Bucket?"
+    default: true
+    visible: bucket_is_deployed
+  bucket_group_name:
+    type: string
+    required: true
+    description: "(Updatable)"
+    title: "Bucket Group - Name"
+    default: "BucketGroup"
+    visible:
+      and:
+        - bucket_is_deployed
+        - bucket_group_is_deployed
+  bucket_group_description:
+    type: string
+    required: true
+    description: "Description for Bucket Group"
+    title: "(Updatable)"
+    default: "Group for users who manage Bucket-related operations."
+    visible:
+      and:
+        - bucket_is_deployed
+        - bucket_group_is_deployed
+  bucket_policy_is_deployed:
+    type: boolean
+    required: true
+    description: "Collection of policy statements that grant permissions for user groups, dynamic groups, and services."
+    title: "Deploy Identity and Access Management (IAM) Policies for Bucket?"
+    default: true
+    visible:
+      and:
+        - bucket_is_deployed
+        - bucket_group_is_deployed
+  bucket_policy_name:
+    type: string
+    required: true
+    description: "(Updatable)"
+    title: "Bucket Policy - Name"
+    default: "BucketPolicy"
+    visible:
+      and:
+        - bucket_is_deployed
+        - bucket_policy_is_deployed
+  bucket_policy_description:
+    type: string
+    required: true
+    description: "(Updatable)"
+    title: "Bucket Policy - Description"
+    default: "Collection of policy statements that grant permissions for user groups, dynamic groups, and services."
+    visible:
+      and:
+        - bucket_is_deployed
+        - bucket_policy_is_deployed
