@@ -66,4 +66,32 @@ In Chrome, Firefox and Safari, you can do this with `CTRL`+`Click` > Select `Ope
 		3. Paste the identifier from your clipboard into the search field at the top of the OCI UI, and press `Enter` on your keyboard.
 		4. Click the listing that corresponds to your resource once it appears in the search results.
 
+### Deployment via CLI Terraform
+#### Prerequisites
+- Fully-privileged access to an OCI Tenancy (account).
+- Sufficient availability of resources in your OCI Tenancy. You can check resource availability [here](https://cloud.oracle.com/limits?region=home).
+- Terraform set up on your local machine. You can access the steps [here](https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/terraformgetstarted.htm).
+- For Oracle Analytics Cloud (OAC) deployment: An access token from an Identity Cloud Service (IDCS) Application, which will be used as an input parameter that is required for OAC deployment. To walk through this process, please follow [this series of instructions](./modules/oac/generate-idcs-access-token-for-oac.md).
+#### Steps
+1. [Download this project](https://github.com/bharathsajjala/OCI_DS_SOLUTION/archive/refs/tags/v2.zip) to your local machine.
+2. [Set up CLI Terraform on your local machine.](https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/terraformgetstarted.htm) 
+3. Navigate to project folder on your local machine via CLI.
+<pre>
+cd &ltYOUR_PATH_TO_THIS_PROJECT&gt
+</pre>
+4. Open your local copy of [vars.tf](./vars.tf) and edit the values that are assigned to the objects of type variable, which will influence the stack topology according to your preferences.
+5. If Oracle Analytics Cloud (OAC) is part of your deployment, ensure that you have already completed the [prerequisite instructions](./modules/oac/generate-idcs-access-token-for-oac.md). Once completed, paste the contents of the file named `token-value.txt` (not to be confused with `tokens.tok`) as the value for the variable named `analytics_instance_idcs_access_token`.
+6. Initialize your Terraform project, downloading necessary packages for the deployment.
+<pre>
+terraform init
+</pre>
+7. View the plan of the Terraform deployment, and confirm that the changes described in the plan reflect the changes you wish to make in your OCI environment.
+<pre>
+terraform plan
+</pre>
+8. Apply the changes described in the plan, and answer `yes` when prompted for confirmation.
+<pre>
+terraform apply
+</pre>
+9. You can track the logs associated with the job by monitoring the output on the CLI. After the deployment has finished, review the output information at the bottom of the logs for instructions on how to access the nodes in the topology.
 
