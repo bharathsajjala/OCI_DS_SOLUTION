@@ -1,0 +1,12 @@
+variable "compartment_description" {}
+variable "compartment_name" {}
+variable "parent_compartment_id" {}
+variable "enable_delete" {}
+variable "compartment_group_is_deployed" {}
+variable "compartment_group_name" {}
+variable "compartment_group_description" {}
+variable "compartment_policy_is_deployed" {}
+variable "compartment_policy_name" {}
+variable "compartment_policy_description" {}
+variable "compartment_policy_statement_substring" {}
+variable "tenancy_ocid" {}
