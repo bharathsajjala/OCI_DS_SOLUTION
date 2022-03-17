@@ -1,6 +1,5 @@
-# OCI_DS_SOLUTION
 
-# oci-lakehouse-pipeline
+# oci-datascience-template
 Deploy the building blocks that are necessary for your data science solution architecture.
 
 ## Table of Contents
@@ -31,6 +30,14 @@ Customizable and private cloud network.
 Build, train, deploy, and manage machine learning models with a data science cloud platform built for teams.
 </pre>
 </details>
+<details>
+<summary>Data Science Notebook</summary>
+<p></p>
+<pre>
+Build, train, deploy, and manage machine learning models with a data science notebook.
+</pre>
+</details>
+
 
 
 ### Deployment via Resource Manager
