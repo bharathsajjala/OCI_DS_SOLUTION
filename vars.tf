@@ -37,7 +37,7 @@ variable "vcn_cidrs" {
   default = ["10.0.0.0/16"]
 }
 variable "vcn_group_is_deployed" { default = false }
-variable "vcn_group_name" { default = "VirtualCloudNetworkGroup" }
+variable "vcn_group_name" { default = "terraform-VirtualCloudNetworkGroup" }
 variable "vcn_group_description" { default = "Group for users who manage Virtual-Cloud-Network-related operations." }
 variable "vcn_policy_is_deployed" { default = false }
 variable "vcn_policy_name" { default = "VirtualCloudNetworkPolicy" }
@@ -55,24 +55,24 @@ variable "ods_subnet_display_name" { default = "ODS Subnet" }
 variable "ods_subnet_dns_label" { default = "ods-sub" }
 variable "ods_subnet_cidr" { default = "10.0.0.0/24" }
 variable "ods_group_is_deployed" { default = false }
-variable "ods_group_name" { default = "DataScienceGroup" }
+variable "ods_group_name" { default = "terraform-DataScienceGroup" }
 variable "ods_group_description" { default = "Group for users who manage Data-Science-related operations." }
 variable "ods_dynamic_group_is_deployed" { default = false }
 variable "ods_dynamic_group_name" { default = "DataScienceDynamicGroup" }
 variable "ods_dynamic_group_description" { default = "Group defined by a rule that matches particular resource-types within a given compartment." }
 variable "ods_policy_is_deployed" { default = false }
-variable "ods_policy_name" { default = "DataSciencePolicy" }
+variable "ods_policy_name" { default = "terraform-DataSciencePolicy" }
 variable "ods_policy_description" { default = "Collection of policy statements that grant permissions for user groups, dynamic groups, and services." }
 
 # Bucket
 variable "bucket_is_deployed" { default = true }
-variable "bucket_name" { default = "Bucket" }
+variable "bucket_name" { default = "terraform-Bucket" }
 variable "bucket_access_type" { default = "NoPublicAccess" }
 variable "bucket_storage_tier" { default = "Standard" }
 variable "bucket_versioning" { default = "Disabled" }
 variable "bucket_group_is_deployed" { default = false }
-variable "bucket_group_name" { default = "BucketGroup" }
+variable "bucket_group_name" { default = "terraform-BucketGroup" }
 variable "bucket_group_description" { default = "Group for users who manage Bucket-related operations." }
 variable "bucket_policy_is_deployed" { default = false }
-variable "bucket_policy_name" { default = "BucketPolicy" }
+variable "bucket_policy_name" { default = "terraform-BucketPolicy" }
 variable "bucket_policy_description" { default = "Collection of policy statements that grant permissions for user groups, dynamic groups, and services." }
